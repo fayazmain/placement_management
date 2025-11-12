@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Companies</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <h2>🏢 Companies</h2>
+  <a href="index.html" class="back">🏠 Home</a>
+
+  <form id="companyForm">
+    <input type="text" id="name" placeholder="Company Name" required />
+    <input type="text" id="location" placeholder="Location" required />
+    <input type="email" id="contact_email" placeholder="Contact Email" />
+    <input type="text" id="website" placeholder="Website" />
+    <button type="submit">Add Company</button>
+  </form>
+
+  <div id="msg"></div>
+
+  <h3>Company Records</h3>
+  <table id="companiesTable" border="1"></table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadTable('/companies', 'companiesTable');
+
+      const form = document.getElementById('companyForm');
+      if (!form) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nameEl = document.getElementById('name');
+        const locationEl = document.getElementById('location');
+        const emailEl = document.getElementById('contact_email');
+        const websiteEl = document.getElementById('website');
+        const name = nameEl ? nameEl.value : '';
+        const location = locationEl ? locationEl.value : '';
+        const contact_email = emailEl ? emailEl.value : '';
+        const website = websiteEl ? websiteEl.value : '';
+        const data = await postData('/companies', { name, location, contact_email, website });
+        document.getElementById('msg').innerText = data.message || data.error || 'Done';
+        await loadTable('/companies', 'companiesTable');
+        e.target.reset();
+      });
+    });
+  </script>
+</body>
+</html>

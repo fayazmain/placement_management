@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Job Roles</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <h2>💼 Job Roles</h2>
+  <a href="index.html" class="back">🏠 Home</a>
+
+  <form id="jobForm">
+    <input type="number" id="company_id" placeholder="Company ID" required />
+    <input type="text" id="title" placeholder="Job Title" required />
+    <input type="number" id="salary" placeholder="Package (LPA)" step="0.01" required />
+    <button type="submit">Add Job Role</button>
+  </form>
+
+  <div id="msg"></div>
+
+  <h3>Job Role Records</h3>
+  <table id="jobrolesTable" border="1"></table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadTable('/jobroles', 'jobrolesTable');
+
+      const form = document.getElementById('jobForm');
+      if (!form) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const titleEl = document.getElementById('title');
+        const salaryEl = document.getElementById('salary');
+        const companyEl = document.getElementById('company_id');
+        const title = titleEl ? titleEl.value : '';
+        const salary = salaryEl ? salaryEl.value : '';
+        const company_id = companyEl ? companyEl.value : '';
+        const data = await postData('/jobroles', { title, salary, company_id });
+        document.getElementById('msg').innerText = data.message || data.error || 'Done';
+        await loadTable('/jobroles', 'jobrolesTable');
+        e.target.reset();
+      });
+    });
+  </script>
+</body>
+</html>

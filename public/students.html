@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Students - Placement System</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <h2>👨‍🎓 Students</h2>
+  <a href="index.html" class="back">🏠 Home</a>
+
+  <form id="studentForm">
+    <input type="text" id="name" placeholder="Name" required />
+    <input type="text" id="reg_no" placeholder="Reg. No" required />
+    <input type="number" id="cgpa" placeholder="CGPA" step="0.01" required />
+    <input type="number" id="dept_id" placeholder="Dept ID" required />
+    <button type="submit">Add Student</button>
+  </form>
+
+  <div id="msg"></div>
+
+  <h3>Student Records</h3>
+  <table id="studentsTable" border="1"></table>
+
+  <script>
+    // Fetch and render students from backend (/api/data)
+    async function loadStudents() {
+      try {
+        const res = await fetch('/api/data');
+        if (!res.ok) throw new Error('Failed to fetch');
+        const data = await res.json();
+        const students = data.students || [];
+
+        const table = document.getElementById('studentsTable');
+        if (!table) return;
+
+        // Build table header
+        table.innerHTML = '<tr><th>ID</th><th>Name</th><th>Reg No</th><th>CGPA</th><th>Dept ID</th></tr>';
+
+        students.forEach(s => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${s.student_id ?? ''}</td>
+            <td>${s.student_name ?? ''}</td>
+            <td>${s.roll_no ?? ''}</td>
+            <td>${s.cgpa ?? ''}</td>
+            <td>${s.department_id ?? s.dept_id ?? ''}</td>
+          `;
+          table.appendChild(row);
+        });
+      } catch (err) {
+        console.error('Error loading students:', err);
+        document.getElementById('msg').innerText = 'Error loading students';
+      }
+    }
+
+    // Handle form submission and send to backend /api/students
+    document.getElementById('studentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const reg_no = document.getElementById('reg_no').value;
+      const cgpa = document.getElementById('cgpa').value;
+      const dept_id = document.getElementById('dept_id').value;
+
+      const payload = {
+        student_name: name,
+        roll_no: reg_no,
+        cgpa: cgpa,
+        department_id: dept_id
+      };
+
+      try {
+        const res = await fetch('/api/students', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.message || 'Failed to add');
+
+        document.getElementById('msg').innerText = result.message || 'Student added';
+        // reload table to reflect DB
+        await loadStudents();
+        e.target.reset();
+      } catch (err) {
+        console.error('Error adding student:', err);
+        document.getElementById('msg').innerText = 'Error adding student';
+      }
+    });
+
+    // Initial load
+    loadStudents();
+  </script>
+</body>
+</html>

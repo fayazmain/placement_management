@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Departments</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <h2>🏫 Departments</h2>
+  <a href="index.html" class="back">🏠 Home</a>
+
+  <form id="deptForm">
+    <input type="text" id="dept_name" placeholder="Department Name" required />
+    <button type="submit">Add Department</button>
+  </form>
+
+  <div id="msg"></div>
+
+  <h3>Department Records</h3>
+  <table id="departmentsTable" border="1"></table>
+
+  <script>
+    // load table on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadTable('/departments', 'departmentsTable');
+
+      const form = document.getElementById('deptForm');
+      if (!form) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const deptNameEl = document.getElementById('dept_name');
+        const dept_name = deptNameEl ? deptNameEl.value : '';
+        const data = await postData('/departments', { dept_name });
+        document.getElementById('msg').innerText = data.message || data.error || 'Done';
+        await loadTable('/departments', 'departmentsTable');
+        e.target.reset();
+      });
+    });
+  </script>
+</body>
+</html>

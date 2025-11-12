@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Placements</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <h2>🎯 Placements</h2>
+  <a href="index.html" class="back">🏠 Home</a>
+
+  <form id="placementForm">
+    <input type="number" id="student_id" placeholder="Student ID" required />
+    <input type="number" id="job_id" placeholder="Job Role ID" required />
+    <input type="text" id="status" placeholder="Status (Applied/Selected/Rejected)" required />
+    <button type="submit">Add Placement</button>
+  </form>
+
+  <div id="msg"></div>
+
+  <h3>Placement Records</h3>
+  <table id="placementsTable" border="1"></table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadTable('/placements', 'placementsTable');
+
+      const form = document.getElementById('placementForm');
+      if (!form) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const studentEl = document.getElementById('student_id');
+        const companyEl = document.getElementById('company_id');
+        const jobEl = document.getElementById('job_id');
+        const statusEl = document.getElementById('status');
+        const student_id = studentEl ? studentEl.value : '';
+        const company_id = companyEl ? companyEl.value : '';
+        const job_id = jobEl ? jobEl.value : '';
+        const status = statusEl ? statusEl.value : '';
+        const data = await postData('/placements', { student_id, company_id, job_id, status });
+        document.getElementById('msg').innerText = data.message || data.error || 'Done';
+        await loadTable('/placements', 'placementsTable');
+        e.target.reset();
+      });
+    });
+  </script>
+</body>
+</html>
