@@ -124,6 +124,99 @@ app.post("/api/placements", (req, res) => {
 const PORT = 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
 
+// ============================================
+// STORED PROCEDURE ENDPOINTS
+// ============================================
+
+// Get placement statistics by department
+app.get('/api/placement-stats', (req, res) => {
+  db.query('CALL GetPlacementStats()', (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results[0] || []);
+  });
+});
+
+// Get eligible students for a job role
+app.get('/api/eligible-students/:jobrole_id', (req, res) => {
+  const { jobrole_id } = req.params;
+  db.query('CALL GetEligibleStudents(?)', [jobrole_id], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results[0] || []);
+  });
+});
+
+// Get top companies by average package
+app.get('/api/top-companies', (req, res) => {
+  db.query('CALL GetTopCompaniesByPackage()', (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results[0] || []);
+  });
+});
+
+// Apply for a job using stored procedure
+app.post('/api/apply-job', (req, res) => {
+  const { student_id, jobrole_id } = req.body;
+  db.query('CALL ApplyForJob(?, ?, @app_id, @msg)', [student_id, jobrole_id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    
+    db.query('SELECT @app_id AS application_id, @msg AS message', (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({
+        application_id: result[0].application_id,
+        message: result[0].message
+      });
+    });
+  });
+});
+
+// Record a placement using stored procedure
+app.post('/api/record-placement', (req, res) => {
+  const { student_id, jobrole_id, status } = req.body;
+  db.query('CALL RecordPlacement(?, ?, ?, @place_id, @msg)', [student_id, jobrole_id, status || 'Applied'], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    
+    db.query('SELECT @place_id AS placement_id, @msg AS message', (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({
+        placement_id: result[0].placement_id,
+        message: result[0].message
+      });
+    });
+  });
+});
+
+// View: Placement Ready Students
+app.get('/api/views/placement-ready', (req, res) => {
+  db.query('SELECT * FROM Placement_Ready_Students', (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// View: Active Job Openings
+app.get('/api/views/active-jobs', (req, res) => {
+  db.query('SELECT * FROM Active_Job_Openings', (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// View: Student Placement Summary
+app.get('/api/views/placement-summary', (req, res) => {
+  db.query('SELECT * FROM Student_Placement_Summary', (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// Get student audit log
+app.get('/api/student-audit', (req, res) => {
+  db.query('SELECT * FROM Student_Audit ORDER BY action_time DESC', (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
 // Debug: list registered routes
 app.get('/debug/routes', (req, res) => {
   try {
