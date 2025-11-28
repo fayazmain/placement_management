@@ -1,121 +1,335 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Placement Management System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Placement Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
   <style>
-    /* General Styles */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Roboto', sans-serif;
+    :root {
+      --bg: #0d0d0d;
+      --surface: #1a1a1a;
+      --surface-alt: #262626;
+      --text: #ececec;
+      --text-secondary: #9b9b9b;
+      --border: #3f3f3f;
+      --accent: #10a37f;
+      --accent-dark: #0d8659;
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html, body { height: 100%; }
+    
     body {
-      background: linear-gradient(to right, #4e54c8, #8f94fb);
-      min-height: 100vh;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
+      height: 100vh;
+      position: fixed;
+      overflow-y: auto;
     }
 
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 2rem;
-      text-align: center;
-      animation: fadeInDown 1s ease-out forwards;
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 30px;
+      color: var(--accent);
+      letter-spacing: -0.5px;
     }
 
-    /* Menu Styles */
-    .menu {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      animation: fadeInUp 1s ease-out forwards;
+    .nav-section {
+      margin-bottom: 24px;
     }
 
-    .menu a {
+    .nav-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      padding: 0 8px;
+    }
+
+    .nav-item {
+      display: block;
+      padding: 10px 12px;
+      margin-bottom: 4px;
+      border-radius: 6px;
       text-decoration: none;
-      color: #4e54c8;
-      background: #fff;
-      padding: 15px 25px;
-      border-radius: 10px;
-      font-weight: 500;
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
+      color: var(--text);
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      background: transparent;
     }
 
-    .menu a::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: 100%;
-      background: #4e54c8;
-      z-index: -1;
-      transform: translateY(100%);
-      transition: transform 0.3s ease;
-      border-radius: 10px;
+    .nav-item:hover {
+      background: var(--surface-alt);
+      color: var(--accent);
     }
 
-    .menu a:hover {
-      color: #fff;
-      transform: translateY(-5px);
+    .nav-item.active {
+      background: rgba(16, 163, 127, 0.1);
+      color: var(--accent);
+      font-weight: 600;
     }
 
-    .menu a:hover::after {
-      transform: translateY(0);
+    /* Main content */
+    .main {
+      flex: 1;
+      margin-left: 260px;
+      padding: 40px;
+      overflow-y: auto;
     }
 
-    /* Animations */
-    @keyframes fadeInDown {
-      0% {
-        opacity: 0;
-        transform: translateY(-50px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
     }
 
-    @keyframes fadeInUp {
-      0% {
-        opacity: 0;
-        transform: translateY(50px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .user-menu {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      background: var(--surface-alt);
+    }
+
+    .card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .card-meta {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Section */
+    .section h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      margin-top: 40px;
+    }
+
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .news-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 16px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .news-item:hover {
+      background: var(--surface-alt);
+      border-left-color: var(--accent-dark);
+    }
+
+    .news-item strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .news-item p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin: 0;
     }
 
     /* Responsive */
-    @media (max-width: 600px) {
-      .menu a {
-        width: 100%;
-        text-align: center;
-      }
+    @media (max-width: 900px) {
+      .sidebar { position: relative; width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+      .main { margin-left: 0; padding: 20px; }
     }
   </style>
 </head>
+
 <body>
-  <h1>🎓 Placement Management System</h1>
-  <div class="menu">
-    <a href="students.html">Students</a>
-    <a href="departments.html">Departments</a>
-    <a href="companies.html">Companies</a>
-    <a href="jobroles.html">Job Roles</a>
-    <a href="placements.html">Placements</a>
+
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="logo" style="display: flex; align-items: center; gap: 8px;">
+      <img src="./sahyadri-logo.png" alt="Sahyadri Logo" style="width: 40px; height: 40px; border-radius: 4px;">
+      <span>Placement</span>
+    </div>
+    
+    <div class="nav-section">
+      <div class="nav-label">Menu</div>
+      <a href="index.html" class="nav-item active">🏠 Dashboard</a>
+      <a href="students.html" class="nav-item">👨‍🎓 Students</a>
+      <a href="departments.html" class="nav-item">🏢 Departments</a>
+      <a href="companies.html" class="nav-item">💼 Companies</a>
+      <a href="jobroles.html" class="nav-item">💻 Job Roles</a>
+      <a href="placements.html" class="nav-item">✅ Placements</a>
+    </div>
+
+    <div class="nav-section" style="margin-top: auto;">
+      <div class="nav-label">Account</div>
+      <a href="#" class="nav-item">⚙️ Settings</a>
+      <a href="#" class="nav-item">❓ Help</a>
+    </div>
   </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="header">
+      <div>
+        <h1>Dashboard</h1>
+        <p>Welcome to the Placement Management System</p>
+      </div>
+      <div class="user-menu">
+        <span style="font-size: 1.5rem;">👤</span>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="card-grid">
+      <div class="card">
+        <h3>Total Students</h3>
+        <div class="card-value" id="total-students">0</div>
+        <p class="card-meta">Active registrations</p>
+      </div>
+      <div class="card">
+        <h3>Placements</h3>
+        <div class="card-value" id="total-placements">0</div>
+        <p class="card-meta">Students placed</p>
+      </div>
+      <div class="card">
+        <h3>Companies</h3>
+        <div class="card-value" id="total-companies">0</div>
+        <p class="card-meta">Hiring partners</p>
+      </div>
+    </div>
+
+    <!-- Latest Placements -->
+    <div class="section">
+      <h2>Latest Placements</h2>
+      <div class="news-list" id="latest-placements">
+        <div class="news-item">
+          <strong>📢 Loading placements...</strong>
+          <p>Please wait while we fetch the data.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- News & Updates -->
+    <div class="section">
+      <h2>Latest News</h2>
+      <div class="news-list">
+        <div class="news-item">
+          <strong>📢 TCS NQT 2025</strong>
+          <p>Registration closes on <b>Dec 10</b>. CGPA cutoff: 6.5+</p>
+        </div>
+        <div class="news-item">
+          <strong>💼 Infosys Internship Drive</strong>
+          <p>Eligibility: CGPA 7.0+, branches CSE/IT. Deadline: Nov 28</p>
+        </div>
+        <div class="news-item">
+          <strong>🏢 Amazon Virtual Talk</strong>
+          <p>Tomorrow, 10 AM — Teams link shared. Open to all departments</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Load stats on dashboard
+    async function loadDashboard() {
+      try {
+        const res = await fetch('/api/data');
+        const data = await res.json();
+        
+        document.getElementById('total-students').textContent = (data.students || []).length;
+        document.getElementById('total-placements').textContent = (data.placements || []).length;
+        document.getElementById('total-companies').textContent = (data.companies || []).length;
+
+        // Show latest placements
+        const placements = (data.placements || []).slice(0, 3);
+        const html = placements.map(p => `
+          <div class="news-item">
+            <strong>✅ ${p.student_name || 'Unknown'}</strong>
+            <p>Company: <b>${p.company_name || 'N/A'}</b> | Role: ${p.role_title || 'N/A'} | Package: ₹${p.package_lpa || '0'} LPA</p>
+          </div>
+        `).join('');
+        document.getElementById('latest-placements').innerHTML = html || '<div class="news-item"><strong>No placements yet</strong></div>';
+      } catch (err) {
+        console.error('Error loading dashboard:', err);
+      }
+    }
+
+    loadDashboard();
+  </script>
+
 </body>
 </html>
